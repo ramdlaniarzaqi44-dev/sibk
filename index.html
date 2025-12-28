@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Bimbingan Konseling - SMAS Al-Multazam</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- SheetJS (xlsx) for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        /* Simple animation for page transitions */
+        .page-content, .parent-view { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* --- THEME STYLES --- */
+        body.theme-blue #login-page { background: linear-gradient(to right, #4364F7, #6FB1FC); }
+        body.theme-blue { background-color: #f3f4f6; }
+        body.theme-green #login-page { background: linear-gradient(to right, #1D976C, #93F9B9); }
+        body.theme-green { background-color: #f0fdf4; }
+        body.theme-purple #login-page { background: linear-gradient(to right, #8E2DE2, #4A00E0); }
+        body.theme-purple { background-color: #f5f3ff; }
+        body.theme-dark #login-page { background: linear-gradient(to right, #232526, #414345); }
+        body.theme-dark { background-color: #111827; }
+        body.theme-dark #main-app, body.theme-dark #parent-app { color: #f9fafb; }
+        body.theme-dark .bg-white { background-color: #1f2937; border-color: #374151; }
+        body.theme-dark .text-gray-800 { color: #f9fafb; }
+        body.theme-dark .text-gray-700 { color: #d1d5db; }
+        body.theme-dark .text-gray-600 { color: #9ca3af; }
+        body.theme-dark .text-gray-500 { color: #6b7280; }
+        body.theme-dark .border-b { border-color: #374151; }
+        body.theme-dark .bg-gray-50 { background-color: #374151; }
+        body.theme-dark .bg-gray-100 { background-color: #111827; }
+        body.theme-dark .bg-gray-200 { background-color: #374151; }
+        body.theme-dark .hover\:bg-gray-100:hover { background-color: #374151; }
+        body.theme-dark nav a { color: #d1d5db; }
+        body.theme-dark nav a.bg-gray-200 { background-color: #4b5563; color: white; }
+        body.theme-dark input, body.theme-dark select, body.theme-dark textarea { background-color: #374151; border-color: #4b5563; color: #f9fafb; }
+        body.theme-dark input::placeholder, body.theme-dark textarea::placeholder { color: #9ca3af; }
+        body.theme-dark table thead { background-color: #374151; }
+        body.theme-dark table tr.bg-white { background-color: #1f2937; }
+        body.theme-dark table tr.hover\:bg-gray-50:hover { background-color: #374151; }
+        body.theme-dark #parent-app nav, body.theme-dark #detail-modal .bg-gray-50, body.theme-dark #confirm-modal .bg-gray-50 { background-color: #1f2937; }
+        body.theme-dark #detail-modal .bg-white, body.theme-dark #confirm-modal .bg-white { background-color: #374151; }
+        body.theme-dark #modal-deskripsi-masalah { background-color: #4b5563; }
+        
+        /* FIX: Input field styling */
+        input[type='text'], input[type='email'], input[type='password'], input[type='date'], input[type='url'], select, textarea {
+            background-color: #f9fafb; /* bg-gray-50 */
+        }
+        body.theme-dark input[type='text'], body.theme-dark input[type='email'], body.theme-dark input[type='password'], body.theme-dark input[type='date'], body.theme-dark input[type='url'], body.theme-dark select, body.theme-dark textarea {
+            background-color: #374151; /* bg-gray-700 */
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="theme-blue">
+    <!-- Loading Spinner -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="loader"></div>
+    </div>
+    
+    <!-- ===== Login Page ===== -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-4" style="display: none;">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-105 duration-300">
+            <div class="text-center mb-8">
+                <img id="login-logo" src="https://placehold.co/100x100/6FB1FC/FFFFFF?text=LOGO" alt="Logo Sekolah" class="w-24 h-24 mx-auto mb-4 rounded-full object-cover">
+                <h1 id="login-school-name" class="text-2xl font-bold text-gray-800">SMAS Al-Multazam</h1>
+                <p class="text-gray-500">Sistem Informasi Bimbingan Konseling</p>
+            </div>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="username" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="password" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transform hover:scale-105 transition-transform duration-200">
+                        Masuk
+                    </button>
+                </div>
+                <p id="login-error" class="text-center text-red-500 text-xs mt-4"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== Main Application (Admin, Guru BK, Guru Mapel) ===== -->
+    <div id="main-app" style="display: none;">
+        <div class="flex h-screen">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white shadow-md flex-shrink-0 flex flex-col">
+                <div>
+                    <div class="p-4 text-center border-b">
+                         <img id="sidebar-logo" src="https://placehold.co/80x80/6FB1FC/FFFFFF?text=LOGO" alt="Logo Sekolah" class="w-20 h-20 mx-auto mb-2 rounded-full object-cover">
+                        <h2 id="sidebar-school-name" class="text-lg font-semibold text-gray-800">SMAS Al-Multazam</h2>
+                        <p id="user-role-display" class="text-xs text-gray-500 capitalize"></p>
+                    </div>
+                    <nav id="main-nav" class="mt-4">
+                        <a href="#" data-page="dashboard" data-roles="admin,guru_bk,guru_mapel" class="nav-link flex items-center px-6 py-3 text-gray-700 bg-gray-200">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            Dashboard
+                        </a>
+                        <a href="#" data-page="laporan-baru" data-roles="admin,guru_bk,guru_mapel" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Pelaporan Siswa
+                        </a>
+                        <a href="#" data-page="daftar-laporan" data-roles="admin,guru_bk" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                            Daftar Laporan
+                        </a>
+                         <a href="#" data-page="kelola-lembaga" data-roles="admin" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 4h5m-5 4h5"></path></svg>
+                            Kelola Lembaga
+                        </a>
+                        <a href="#" data-page="kelola-kelas" data-roles="admin" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            Kelola Kelas
+                        </a>
+                        <a href="#" data-page="biodata-sekolah" data-roles="admin" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            Biodata Sekolah
+                        </a>
+                        <a href="#" data-page="kelola-pengguna" data-roles="admin" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            Kelola Pengguna
+                        </a>
+                    </nav>
+                </div>
+                <div class="mt-auto">
+                    <a href="#" id="logout-button" class="flex items-center w-full px-6 py-4 text-red-600 hover:bg-red-100 border-t">
+                         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Keluar
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6 overflow-y-auto">
+                <!-- All pages here... -->
+                <div id="dashboard-page" class="page-content">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Total Laporan</p>
+                                <p id="total-laporan" class="text-2xl font-bold text-gray-800">0</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+                            <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                               <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Laporan Baru</p>
+                                <p id="laporan-baru-count" class="text-2xl font-bold text-gray-800">0</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+                            <div class="bg-green-100 p-3 rounded-full mr-4">
+                                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Laporan Selesai</p>
+                                <p id="laporan-selesai" class="text-2xl font-bold text-gray-800">0</p>
+                            </div>
+                        </div>
+                         <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+                            <div class="bg-purple-100 p-3 rounded-full mr-4">
+                                <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 4h5m-5 4h5"></path></svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Jumlah Kelas</p>
+                                <p id="total-kelas" class="text-2xl font-bold text-gray-800">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Statistik Permasalahan Siswa</h2>
+                        <canvas id="permasalahanChart"></canvas>
+                    </div>
+                    <div class="mt-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Laporan Terbaru</h2>
+                        <div id="dashboard-recent-reports" class="space-y-4"></div>
+                    </div>
+                </div>
+
+                <div id="laporan-baru-page" class="page-content hidden">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Buat Laporan Baru</h1>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <form id="form-laporan-baru">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="lembaga-laporan" class="block text-gray-700 font-medium mb-2">Lembaga</label>
+                                    <select id="lembaga-laporan" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required></select>
+                                </div>
+                                <div>
+                                    <label for="kelas-siswa" class="block text-gray-700 font-medium mb-2">Kelas</label>
+                                    <select id="kelas-siswa" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required></select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="nama-siswa" class="block text-gray-700 font-medium mb-2">Nama Siswa</label>
+                                    <input type="text" id="nama-siswa" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                </div>
+                                <div>
+                                    <label for="guru-pelapor" class="block text-gray-700 font-medium mb-2">Nama Guru Pelapor</label>
+                                    <input type="text" id="guru-pelapor" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                </div>
+                                <div>
+                                    <label for="tanggal-pelaporan" class="block text-gray-700 font-medium mb-2">Tanggal Pelaporan</label>
+                                    <input type="date" id="tanggal-pelaporan" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="permasalahan" class="block text-gray-700 font-medium mb-2">Permasalahan Siswa</label>
+                                    <select id="permasalahan" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                        <option value="Akademik">Akademik</option>
+                                        <option value="Emosional">Emosional</option>
+                                        <option value="Sosial">Sosial</option>
+                                        <option value="Karir">Karir</option>
+                                        <option value="Keluarga">Keluarga</option>
+                                        <option value="Perilaku">Perilaku</option>
+                                        <option value="Kesehatan">Kesehatan</option>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="deskripsi-masalah" class="block text-gray-700 font-medium mb-2">Deskripsi Masalah</label>
+                                    <textarea id="deskripsi-masalah" rows="4" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required></textarea>
+                                </div>
+                            </div>
+                            <div class="mt-8 text-right">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">Kirim Laporan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="daftar-laporan-page" class="page-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800">Daftar Laporan Siswa</h1>
+                        <div class="flex items-center space-x-2">
+                            <button id="delete-selected-btn" class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Hapus Terpilih
+                            </button>
+                            <button id="download-excel-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download Laporan
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="filter-lembaga" class="block text-sm font-medium text-gray-700">Filter Lembaga</label>
+                                <select id="filter-lembaga" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                            </div>
+                            <div>
+                                <label for="filter-kelas" class="block text-sm font-medium text-gray-700">Filter Kelas</label>
+                                <select id="filter-kelas" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-gray-500">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="p-4">
+                                            <input type="checkbox" id="select-all-reports" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">Nama Siswa</th>
+                                        <th scope="col" class="px-6 py-3">Kelas</th>
+                                        <th scope="col" class="px-6 py-3">Pelapor</th>
+                                        <th scope="col" class="px-6 py-3">Tanggal</th>
+                                        <th scope="col" class="px-6 py-3">Masalah</th>
+                                        <th scope="col" class="px-6 py-3">Progress</th>
+                                        <th scope="col" class="px-6 py-3 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel-laporan-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="kelola-lembaga-page" class="page-content hidden">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Kelola Lembaga</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Tambah Lembaga Baru</h2>
+                            <form id="form-tambah-lembaga">
+                                <label for="nama-lembaga-baru" class="block text-gray-700 font-medium mb-2">Nama Lembaga</label>
+                                <input type="text" id="nama-lembaga-baru" placeholder="Contoh: SMA" class="w-full border-gray-300 rounded-lg shadow-sm" required>
+                                <button type="submit" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Tambah Lembaga</button>
+                            </form>
+                        </div>
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Daftar Lembaga</h2>
+                            <ul id="daftar-lembaga-list" class="space-y-2"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="kelola-kelas-page" class="page-content hidden">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Kelola Kelas</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Tambah Kelas Baru</h2>
+                            <form id="form-tambah-kelas">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="lembaga-kelas-baru" class="block text-gray-700 font-medium mb-2">Pilih Lembaga</label>
+                                        <select id="lembaga-kelas-baru" class="w-full border-gray-300 rounded-lg shadow-sm" required></select>
+                                    </div>
+                                    <div>
+                                        <label for="nama-kelas-baru" class="block text-gray-700 font-medium mb-2">Nama Kelas</label>
+                                        <input type="text" id="nama-kelas-baru" placeholder="Contoh: XII IPA 1" class="w-full border-gray-300 rounded-lg shadow-sm" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Tambah Kelas</button>
+                            </form>
+                        </div>
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Daftar Kelas</h2>
+                            <ul id="daftar-kelas-list" class="space-y-2"></ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="biodata-sekolah-page" class="page-content hidden">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Biodata Sekolah</h1>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <form id="form-biodata-sekolah">
+                            <div class="space-y-6">
+                                <div>
+                                    <h3 class="text-lg font-medium leading-6 text-gray-800">Informasi Dasar</h3>
+                                    <div class="mt-4 space-y-4">
+                                        <div>
+                                            <label for="nama-sekolah-input" class="block text-sm font-medium text-gray-700">Nama Sekolah</label>
+                                            <input type="text" id="nama-sekolah-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                        </div>
+                                        <div>
+                                            <label for="logo-sekolah-input" class="block text-sm font-medium text-gray-700">URL Logo Sekolah</label>
+                                            <input type="url" id="logo-sekolah-input" placeholder="https://example.com/logo.png" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="border-gray-200 dark:border-gray-600">
+                                <div>
+                                    <h3 class="text-lg font-medium leading-6 text-gray-800">Tema Tampilan</h3>
+                                    <p class="mt-1 text-sm text-gray-500">Pilih skema warna untuk seluruh aplikasi.</p>
+                                    <fieldset class="mt-4">
+                                        <legend class="sr-only">Pilihan Tema</legend>
+                                        <div id="theme-options-container" class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+                                            <!-- Theme options will be populated by JS -->
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="mt-8 text-right">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">Simpan Perubahan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="kelola-pengguna-page" class="page-content hidden">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Kelola Pengguna</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Tambah Pengguna Baru</h2>
+                            <form id="form-tambah-pengguna">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="email-baru" class="block text-gray-700 font-medium mb-2">Email Pengguna</label>
+                                        <input type="email" id="email-baru" class="w-full border-gray-300 rounded-lg shadow-sm" required>
+                                    </div>
+                                    <div>
+                                        <label for="password-baru" class="block text-gray-700 font-medium mb-2">Password</label>
+                                        <input type="password" id="password-baru" class="w-full border-gray-300 rounded-lg shadow-sm" required>
+                                    </div>
+                                    <div>
+                                        <label for="role-baru" class="block text-gray-700 font-medium mb-2">Peran (Role)</label>
+                                        <select id="role-baru" class="w-full border-gray-300 rounded-lg shadow-sm" required>
+                                            <option value="admin">Admin</option>
+                                            <option value="guru_bk">Guru BK</option>
+                                            <option value="guru_mapel">Guru Mapel</option>
+                                            <option value="orangtua">Orang Tua</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Tambah Pengguna</button>
+                            </form>
+                        </div>
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Daftar Pengguna</h2>
+                            <div id="daftar-pengguna-list" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ===== Parent View ===== -->
+    <div id="parent-app" class="hidden parent-view">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="flex justify-between">
+                    <div class="flex space-x-4">
+                        <div>
+                            <a href="#" class="flex items-center py-5 px-2 text-gray-700">
+                                <img id="parent-logo" src="https://placehold.co/40x40/6FB1FC/FFFFFF?text=LOGO" alt="Logo" class="h-8 w-8 mr-2 rounded-full">
+                                <span id="parent-school-name" class="font-bold">SMAS Al-Multazam</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <button id="parent-logout-button" class="py-2 px-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition duration-300">Keluar</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="py-12 px-4">
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Rekap Laporan Siswa</h1>
+                <p class="text-gray-500 mb-6">Silakan masukkan nama lengkap siswa untuk melihat riwayat laporan.</p>
+                <form id="form-cari-siswa">
+                    <div class="mb-4">
+                        <label for="nama-siswa-cari" class="block text-sm font-medium text-gray-700">Nama Lengkap Siswa</label>
+                        <input type="text" id="nama-siswa-cari" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Cari Laporan</button>
+                </form>
+                <div id="hasil-pencarian-ortu" class="mt-8"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ===== Modals ===== -->
+    <div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-full overflow-y-auto">
+            <div class="p-6 border-b">
+                <h3 class="text-xl font-semibold text-gray-800">Detail Laporan & Aksi</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="modal-report-id">
+                <div><strong>Nama Siswa:</strong> <span id="modal-nama-siswa"></span></div>
+                <div><strong>Kelas:</strong> <span id="modal-kelas-siswa"></span></div>
+                <div><strong>Guru Pelapor:</strong> <span id="modal-guru-pelapor"></span></div>
+                <div><strong>Tanggal Laporan:</strong> <span id="modal-tanggal-laporan"></span></div>
+                <div><strong>Permasalahan:</strong> <span id="modal-permasalahan"></span></div>
+                <div><strong>Deskripsi Masalah:</strong> <p id="modal-deskripsi-masalah" class="p-2 bg-gray-50 rounded"></p></div>
+                <hr>
+                <div>
+                    <label for="modal-progress" class="block text-gray-700 font-medium mb-2">Ubah Progress Laporan</label>
+                    <select id="modal-progress" class="w-full border-gray-300 rounded-lg shadow-sm">
+                        <option value="Baru">Baru</option>
+                        <option value="Diproses">Diproses</option>
+                        <option value="Selesai">Selesai</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="modal-hasil-konseling" class="block text-gray-700 font-medium mb-2">Hasil Konseling & Rekomendasi</label>
+                    <textarea id="modal-hasil-konseling" rows="4" class="w-full border-gray-300 rounded-lg shadow-sm"></textarea>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 flex justify-end space-x-2">
+                <button id="modal-close-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg">Tutup</button>
+                <button id="modal-save-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-800">Konfirmasi</h3>
+                <p id="confirm-modal-message" class="mt-2 text-sm text-gray-600"></p>
+            </div>
+            <div class="p-4 bg-gray-50 flex justify-end space-x-2">
+                <button id="confirm-modal-cancel" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg">Batal</button>
+                <button id="confirm-modal-ok" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Ya</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg hidden transition-opacity duration-300">
+        <p id="toast-message"></p>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            getDoc,
+            getDocs,
+            setDoc,
+            addDoc,
+            deleteDoc,
+            updateDoc,
+            onSnapshot,
+            query,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Your Firebase project configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDlhzpt2rw6KXlier4DDdViFP0VLUCfkQg",
+          authDomain: "sibk-6f46d.firebaseapp.com",
+          projectId: "sibk-6f46d",
+          storageBucket: "sibk-6f46d.appspot.com",
+          messagingSenderId: "145731868283",
+          appId: "1:145731868283:web:ad150222aa8084fec134de"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- GLOBAL STATE ---
+        let currentUserProfile = null;
+        let unsubscribeListeners = []; // To store all active listeners
+        let selectedReports = new Set();
+        let allReports = [];
+        let allLembaga = [];
+        let allClasses = [];
+
+        // --- DOM ELEMENTS ---
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loginPage = document.getElementById('login-page');
+        const mainApp = document.getElementById('main-app');
+        const parentApp = document.getElementById('parent-app');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const logoutButton = document.getElementById('logout-button');
+        const parentLogoutButton = document.getElementById('parent-logout-button');
+        const mainNav = document.getElementById('main-nav');
+        const pages = document.querySelectorAll('.page-content');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const deleteSelectedBtn = document.getElementById('delete-selected-btn');
+        const selectAllCheckbox = document.getElementById('select-all-reports');
+        const reportTableBody = document.getElementById('tabel-laporan-body');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmModalMessage = document.getElementById('confirm-modal-message');
+        const confirmModalOk = document.getElementById('confirm-modal-ok');
+        const confirmModalCancel = document.getElementById('confirm-modal-cancel');
+        
+        let permasalahanChart;
+        let onConfirmAction = null;
+
+        // --- THEME FUNCTIONS ---
+        const applyTheme = (themeClass) => {
+            if (!themeClass) themeClass = 'theme-blue';
+            document.body.className = '';
+            document.body.classList.add(themeClass);
+        };
+
+        const renderThemeOptions = (currentTheme) => {
+            const themes = [
+                { id: 'theme-blue', name: 'Biru', color: 'bg-blue-500' },
+                { id: 'theme-green', name: 'Hijau', color: 'bg-green-500' },
+                { id: 'theme-purple', name: 'Ungu', color: 'bg-purple-500' },
+                { id: 'theme-dark', name: 'Gelap', color: 'bg-gray-800' }
+            ];
+            const container = document.getElementById('theme-options-container');
+            container.innerHTML = '';
+            themes.forEach(theme => {
+                const isChecked = theme.id === currentTheme;
+                container.innerHTML += `
+                    <div class="flex items-center">
+                        <input id="theme-${theme.id}" name="theme-choice" type="radio" value="${theme.id}" ${isChecked ? 'checked' : ''} class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+                        <label for="theme-${theme.id}" class="ml-3 block text-sm font-medium text-gray-700">
+                           <span class="flex items-center">
+                                <span class="w-4 h-4 rounded-full ${theme.color} mr-2"></span>
+                                ${theme.name}
+                           </span>
+                        </label>
+                    </div>
+                `;
+            });
+        };
+        
+        // --- REALTIME LISTENERS ---
+        function setupRealtimeListeners() {
+            // Detach any existing listeners
+            unsubscribeListeners.forEach(unsubscribe => unsubscribe());
+            unsubscribeListeners = [];
+
+            // Listener for School Profile
+            const unsubProfile = onSnapshot(doc(db, "schoolProfile", "main"), (doc) => {
+                const profile = doc.data();
+                if (profile) {
+                    applyTheme(profile.theme);
+                    renderSchoolProfile(profile);
+                }
+            });
+            unsubscribeListeners.push(unsubProfile);
+
+            // Listener for Lembaga
+            const unsubLembaga = onSnapshot(collection(db, "lembaga"), (snapshot) => {
+                allLembaga = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderLembagaList(allLembaga);
+                renderLembagaOptions(allLembaga);
+            });
+            unsubscribeListeners.push(unsubLembaga);
+
+            // Listener for Classes
+            const unsubClasses = onSnapshot(collection(db, "classes"), (snapshot) => {
+                allClasses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderClassList(allClasses);
+                renderClassOptions(); // Render all initially
+            });
+            unsubscribeListeners.push(unsubClasses);
+
+            // Listener for Reports
+            const unsubReports = onSnapshot(collection(db, "reports"), (snapshot) => {
+                allReports = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDashboard(allReports);
+                filterAndRenderReports();
+            });
+            unsubscribeListeners.push(unsubReports);
+
+            // Listener for Users (Admin only)
+            if (currentUserProfile && currentUserProfile.role === 'admin') {
+                const unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
+                    const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderUserList(users);
+                });
+                unsubscribeListeners.push(unsubUsers);
+            }
+        }
+
+
+        // --- RENDER FUNCTIONS ---
+        const renderRecentReportsOnDashboard = (reports = []) => {
+            const container = document.getElementById('dashboard-recent-reports');
+            container.innerHTML = '';
+            const recentReports = reports.sort((a, b) => new Date(b.reportDate) - new Date(a.reportDate)).slice(0, 5);
+            if (recentReports.length === 0) {
+                container.innerHTML = `<div class="bg-white p-4 rounded-lg shadow-md text-center text-gray-500">Tidak ada laporan terbaru.</div>`;
+                return;
+            }
+            recentReports.forEach(report => {
+                let progressBadge;
+                switch(report.progress) {
+                    case 'Baru': progressBadge = 'bg-yellow-100 text-yellow-800'; break;
+                    case 'Diproses': progressBadge = 'bg-blue-100 text-blue-800'; break;
+                    case 'Selesai': progressBadge = 'bg-green-100 text-green-800'; break;
+                    default: progressBadge = 'bg-gray-100 text-gray-800';
+                }
+                const reportElement = `
+                    <div class="bg-white p-4 rounded-lg shadow-md flex items-start justify-between gap-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">${report.studentName} <span class="text-sm font-normal text-gray-500">- ${report.className}</span></p>
+                            <p class="text-sm text-gray-600 mt-1">${report.description}</p>
+                        </div>
+                        <span class="ml-4 flex-shrink-0 px-2 py-1 text-xs font-medium rounded-full ${progressBadge}">${report.progress}</span>
+                    </div>
+                `;
+                container.innerHTML += reportElement;
+            });
+        };
+
+        const renderDashboard = (reports = []) => {
+            const classesCount = document.querySelectorAll('#daftar-kelas-list li').length;
+            document.getElementById('total-laporan').textContent = reports.length;
+            document.getElementById('laporan-baru-count').textContent = reports.filter(r => r.progress === 'Baru').length;
+            document.getElementById('laporan-selesai').textContent = reports.filter(r => r.progress === 'Selesai').length;
+            document.getElementById('total-kelas').textContent = classesCount;
+            const problemCategories = ['Akademik', 'Emosional', 'Sosial', 'Karir', 'Keluarga', 'Perilaku', 'Kesehatan'];
+            const problemCounts = problemCategories.map(cat => reports.filter(r => r.problem === cat).length);
+            const ctx = document.getElementById('permasalahanChart').getContext('2d');
+            if (permasalahanChart) {
+                permasalahanChart.destroy();
+            }
+            permasalahanChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: problemCategories,
+                    datasets: [{
+                        label: 'Jumlah Kasus',
+                        data: problemCounts,
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
+            });
+            renderRecentReportsOnDashboard(reports);
+        };
+        
+        const renderReportsTable = (reports = []) => {
+            reportTableBody.innerHTML = '';
+            if (reports.length === 0) {
+                reportTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-4">Tidak ada data laporan yang cocok dengan filter.</td></tr>`;
+                return;
+            }
+            reports.sort((a, b) => new Date(b.reportDate) - new Date(a.reportDate)).forEach(report => {
+                const isChecked = selectedReports.has(report.id) ? 'checked' : '';
+                let progressBadge;
+                switch(report.progress) {
+                    case 'Baru': progressBadge = 'bg-yellow-100 text-yellow-800'; break;
+                    case 'Diproses': progressBadge = 'bg-blue-100 text-blue-800'; break;
+                    case 'Selesai': progressBadge = 'bg-green-100 text-green-800'; break;
+                    default: progressBadge = 'bg-gray-100 text-gray-800';
+                }
+                const row = `
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td class="p-4">
+                            <input type="checkbox" class="report-checkbox rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" data-id="${report.id}" ${isChecked}>
+                        </td>
+                        <td class="px-6 py-4 font-medium text-gray-900">${report.studentName}</td>
+                        <td class="px-6 py-4">${report.className}</td>
+                        <td class="px-6 py-4">${report.reportingTeacher}</td>
+                        <td class="px-6 py-4">${report.reportDate}</td>
+                        <td class="px-6 py-4">${report.problem}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full ${progressBadge}">${report.progress}</span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <button data-id="${report.id}" class="view-detail-btn font-medium text-blue-600 hover:underline">Detail & Aksi</button>
+                        </td>
+                    </tr>
+                `;
+                reportTableBody.innerHTML += row;
+            });
+        };
+        
+        const renderClassList = (classes = []) => {
+            const list = document.getElementById('daftar-kelas-list');
+            list.innerHTML = '';
+            if (classes.length === 0) {
+                list.innerHTML = `<li class="text-gray-500">Belum ada kelas ditambahkan.</li>`;
+                return;
+            }
+            classes.sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
+                const item = `
+                    <li class="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                        <div>
+                            <span class="font-medium">${c.name}</span>
+                            <span class="text-sm text-gray-500 ml-2">(${c.lembaga})</span>
+                        </div>
+                        <button data-id="${c.id}" class="delete-class-btn text-red-500 hover:text-red-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </li>
+                `;
+                list.innerHTML += item;
+            });
+        };
+        
+        const renderLembagaList = (lembaga = []) => {
+            const list = document.getElementById('daftar-lembaga-list');
+            list.innerHTML = '';
+            if (lembaga.length === 0) {
+                list.innerHTML = `<li class="text-gray-500">Belum ada lembaga ditambahkan.</li>`;
+                return;
+            }
+            lembaga.sort((a, b) => a.name.localeCompare(b.name)).forEach(l => {
+                const item = `
+                    <li class="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                        <span>${l.name}</span>
+                        <button data-id="${l.id}" class="delete-lembaga-btn text-red-500 hover:text-red-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </li>
+                `;
+                list.innerHTML += item;
+            });
+        };
+
+        const renderLembagaOptions = (lembaga = []) => {
+            const selects = [document.getElementById('lembaga-kelas-baru'), document.getElementById('lembaga-laporan'), document.getElementById('filter-lembaga')];
+            selects.forEach(select => {
+                if (select) {
+                    const selectedValue = select.value;
+                    select.innerHTML = '<option value="">Semua Lembaga</option>';
+                    lembaga.sort((a, b) => a.name.localeCompare(b.name)).forEach(l => {
+                        select.innerHTML += `<option value="${l.name}">${l.name}</option>`;
+                    });
+                    select.value = selectedValue;
+                }
+            });
+        };
+
+        const renderClassOptions = (lembagaName = null) => {
+            const selects = [document.getElementById('kelas-siswa'), document.getElementById('filter-kelas')];
+            const classesToRender = lembagaName ? allClasses.filter(c => c.lembaga === lembagaName) : allClasses;
+            
+            selects.forEach(select => {
+                if (select) {
+                    const selectedValue = select.value;
+                    select.innerHTML = '<option value="">Semua Kelas</option>';
+                    classesToRender.sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
+                        select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                    });
+                    select.value = selectedValue;
+                }
+            });
+        };
+
+        const renderSchoolProfile = (profile) => {
+            if (!profile) return;
+            document.getElementById('nama-sekolah-input').value = profile.name;
+            document.getElementById('logo-sekolah-input').value = profile.logoUrl;
+            document.querySelectorAll('#login-school-name, #sidebar-school-name, #parent-school-name').forEach(el => el.textContent = profile.name);
+            document.querySelectorAll('#login-logo, #sidebar-logo, #parent-logo').forEach(el => {
+                el.src = profile.logoUrl || 'https://placehold.co/100x100/cccccc/ffffff?text=LOGO';
+                el.onerror = () => { el.src = 'https://placehold.co/100x100/cccccc/ffffff?text=Error'; };
+            });
+            renderThemeOptions(profile.theme);
+        };
+
+        const renderUserList = (users = []) => {
+            const list = document.getElementById('daftar-pengguna-list');
+            list.innerHTML = '';
+            users.forEach(user => {
+                const roleText = user.role.replace('_', ' ');
+                let roleBadge;
+                switch (user.role) {
+                    case 'admin': roleBadge = 'bg-red-100 text-red-800'; break;
+                    case 'guru_bk': roleBadge = 'bg-blue-100 text-blue-800'; break;
+                    case 'guru_mapel': roleBadge = 'bg-green-100 text-green-800'; break;
+                    case 'orangtua': roleBadge = 'bg-purple-100 text-purple-800'; break;
+                }
+                const item = `
+                    <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                        <div>
+                            <p class="font-medium">${user.email}</p>
+                            <span class="px-2 py-1 text-xs font-medium rounded-full ${roleBadge} capitalize">${roleText}</span>
+                        </div>
+                        ${auth.currentUser.uid !== user.id ? `<button data-id="${user.id}" class="delete-user-btn text-red-500 hover:text-red-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>` : ''}
+                    </div>
+                `;
+                list.innerHTML += item;
+            });
+        };
+
+        // --- PAGE NAVIGATION & VISIBILITY ---
+        const updateSidebarVisibility = () => {
+            const navLinks = mainNav.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const roles = link.dataset.roles.split(',');
+                if (currentUserProfile && roles.includes(currentUserProfile.role)) {
+                    link.style.display = 'flex';
+                } else {
+                    link.style.display = 'none';
+                }
+            });
+        };
+        
+        const showPage = (pageId) => {
+            pages.forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId + '-page').classList.remove('hidden');
+            mainNav.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-gray-200');
+                if (link.dataset.page === pageId) {
+                    link.classList.add('bg-gray-200');
+                }
+            });
+        };
+
+        mainNav.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (link.style.display !== 'none') {
+                    showPage(link.dataset.page);
+                }
+            });
+        });
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, async (user) => {
+            // First, hide everything to prevent flashes of content
+            loginPage.style.display = 'none';
+            mainApp.style.display = 'none';
+            parentApp.style.display = 'none';
+            
+            if (user) {
+                // User is signed in.
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    currentUserProfile = { 
+                        uid: user.uid, 
+                        email: userData.email,
+                        role: userData.role ? userData.role.trim().toLowerCase() : null
+                    };
+                    
+                    if (currentUserProfile.role === 'orangtua') {
+                        parentApp.style.display = 'block';
+                    } else {
+                        mainApp.style.display = 'block';
+                        document.getElementById('user-role-display').textContent = currentUserProfile.role.replace('_', ' ');
+                        updateSidebarVisibility();
+                        showPage('dashboard');
+                    }
+                    setupRealtimeListeners();
+                } else {
+                    console.error("User document not found in Firestore!");
+                    await handleLogout();
+                }
+            } else {
+                // User is signed out.
+                currentUserProfile = null;
+                loginPage.style.display = 'flex';
+                unsubscribeListeners.forEach(unsub => unsub());
+                unsubscribeListeners = [];
+            }
+            loadingOverlay.classList.add('hidden');
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            loginError.textContent = '';
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                loginError.textContent = 'Email atau password salah.';
+                console.error("Login error:", error);
+            }
+        });
+
+        async function handleLogout() {
+            loadingOverlay.classList.remove('hidden');
+            await signOut(auth);
+            loginForm.reset();
+        }
+        logoutButton.addEventListener('click', handleLogout);
+        parentLogoutButton.addEventListener('click', handleLogout);
+
+
+        // --- EVENT HANDLERS (CRUD) ---
+        document.getElementById('form-laporan-baru').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newReport = {
+                lembaga: document.getElementById('lembaga-laporan').value,
+                studentName: document.getElementById('nama-siswa').value, 
+                className: document.getElementById('kelas-siswa').value, 
+                reportingTeacher: document.getElementById('guru-pelapor').value, 
+                reportDate: document.getElementById('tanggal-pelaporan').value, 
+                problem: document.getElementById('permasalahan').value, 
+                description: document.getElementById('deskripsi-masalah').value, 
+                progress: 'Baru', 
+                counselingResult: ''
+            };
+            try {
+                await addDoc(collection(db, "reports"), newReport);
+                e.target.reset();
+                showToast('Laporan berhasil ditambahkan!');
+                if (currentUserProfile.role !== 'guru_mapel') {
+                    showPage('daftar-laporan');
+                } else {
+                    showPage('dashboard');
+                }
+            } catch (error) {
+                console.error("Error adding report: ", error);
+                showToast('Gagal menambahkan laporan.', 'error');
+            }
+        });
+        
+        document.getElementById('form-tambah-lembaga').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newLembagaName = document.getElementById('nama-lembaga-baru').value.trim();
+            if (newLembagaName) {
+                try {
+                    await addDoc(collection(db, "lembaga"), { name: newLembagaName });
+                    showToast('Lembaga berhasil ditambahkan!');
+                    e.target.reset();
+                } catch (error) {
+                    console.error("Error adding lembaga: ", error);
+                    showToast('Gagal menambahkan lembaga.', 'error');
+                }
+            }
+        });
+
+        document.getElementById('daftar-lembaga-list').addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.delete-lembaga-btn');
+            if (deleteBtn) {
+                const lembagaId = deleteBtn.dataset.id;
+                const lembagaName = deleteBtn.parentElement.querySelector('span').textContent;
+                showConfirmModal(`Apakah Anda yakin ingin menghapus lembaga "${lembagaName}"?`, async () => {
+                     try {
+                        await deleteDoc(doc(db, "lembaga", lembagaId));
+                        showToast('Lembaga berhasil dihapus!');
+                    } catch (error) {
+                        console.error("Error deleting lembaga: ", error);
+                        showToast('Gagal menghapus lembaga.', 'error');
+                    }
+                });
+            }
+        });
+
+        document.getElementById('form-tambah-kelas').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newClassName = document.getElementById('nama-kelas-baru').value.trim();
+            const lembaga = document.getElementById('lembaga-kelas-baru').value;
+            if (newClassName && lembaga) {
+                try {
+                    await addDoc(collection(db, "classes"), { name: newClassName, lembaga: lembaga });
+                    showToast('Kelas berhasil ditambahkan!');
+                    e.target.reset();
+                } catch (error) {
+                    console.error("Error adding class: ", error);
+                    showToast('Gagal menambahkan kelas.', 'error');
+                }
+            } else {
+                showToast('Lembaga dan Nama Kelas harus diisi.', 'error');
+            }
+        });
+
+        document.getElementById('daftar-kelas-list').addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.delete-class-btn');
+            if (deleteBtn) {
+                const classId = deleteBtn.dataset.id;
+                const className = deleteBtn.parentElement.querySelector('span').textContent;
+                showConfirmModal(`Apakah Anda yakin ingin menghapus kelas "${className}"?`, async () => {
+                     try {
+                        await deleteDoc(doc(db, "classes", classId));
+                        showToast('Kelas berhasil dihapus!');
+                    } catch (error) {
+                        console.error("Error deleting class: ", error);
+                        showToast('Gagal menghapus kelas.', 'error');
+                    }
+                });
+            }
+        });
+
+        document.getElementById('form-biodata-sekolah').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const profile = {
+                name: document.getElementById('nama-sekolah-input').value,
+                logoUrl: document.getElementById('logo-sekolah-input').value,
+                theme: document.querySelector('input[name="theme-choice"]:checked').value
+            };
+            try {
+                await setDoc(doc(db, "schoolProfile", "main"), profile);
+                showToast('Biodata sekolah berhasil diperbarui!');
+            } catch (error) {
+                console.error("Error updating profile: ", error);
+                showToast('Gagal memperbarui biodata.', 'error');
+            }
+        });
+
+        // User Management (Admin)
+        document.getElementById('form-tambah-pengguna').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showToast('Fungsi ini memerlukan backend/Cloud Function untuk keamanan. Untuk demo, user dibuat di Firebase Console.', 'info');
+            e.target.reset();
+        });
+
+        document.getElementById('daftar-pengguna-list').addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.delete-user-btn');
+            if (deleteBtn) {
+                const userId = deleteBtn.dataset.id;
+                showConfirmModal('Hapus dari database? (User Auth tetap ada). Untuk demo, hapus user dari Firebase Console.', async () => {
+                    try {
+                        await deleteDoc(doc(db, "users", userId));
+                        showToast('Pengguna berhasil dihapus dari database.');
+                    } catch (error) {
+                        console.error("Error deleting user from Firestore: ", error);
+                        showToast('Gagal menghapus pengguna.', 'error');
+                    }
+                });
+            }
+        });
+
+        // Parent Search
+        document.getElementById('form-cari-siswa').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const studentName = document.getElementById('nama-siswa-cari').value.trim();
+            const resultsContainer = document.getElementById('hasil-pencarian-ortu');
+            
+            const q = query(collection(db, "reports"), where("studentName", "==", studentName));
+            const querySnapshot = await getDocs(q);
+            const filteredReports = querySnapshot.docs.map(doc => doc.data());
+
+            if (filteredReports.length > 0) {
+                let html = '<h3 class="text-lg font-semibold text-gray-800 mb-4">Hasil Ditemukan:</h3><ul class="space-y-3">';
+                filteredReports.sort((a,b) => new Date(b.reportDate) - new Date(a.reportDate)).forEach(r => {
+                    html += `
+                        <li class="p-4 bg-gray-50 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <p class="font-semibold text-gray-700">${r.problem}</p>
+                                <p class="text-sm text-gray-500">${r.reportDate}</p>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">${r.description}</p>
+                            ${r.progress === 'Selesai' && r.counselingResult ? `<div class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600"><p class="text-sm text-gray-500"><strong>Hasil Konseling:</strong> ${r.counselingResult}</p></div>` : ''}
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+                resultsContainer.innerHTML = html;
+            } else {
+                resultsContainer.innerHTML = `
+                    <div class="mt-6 p-4 text-center bg-green-100 text-green-800 rounded-lg">
+                        <p class="font-semibold">Selamat, siswa tersebut tidak sedang mempunyai laporan.</p>
+                    </div>
+                `;
+            }
+        });
+
+
+        // --- MODAL HANDLING ---
+        const detailModal = document.getElementById('detail-modal');
+        reportTableBody.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('view-detail-btn')) {
+                const reportId = e.target.dataset.id;
+                const reportRef = doc(db, "reports", reportId);
+                const reportSnap = await getDoc(reportRef);
+                if (reportSnap.exists()) {
+                    const report = reportSnap.data();
+                    document.getElementById('modal-report-id').value = reportSnap.id;
+                    document.getElementById('modal-nama-siswa').textContent = report.studentName;
+                    document.getElementById('modal-kelas-siswa').textContent = report.className;
+                    document.getElementById('modal-guru-pelapor').textContent = report.reportingTeacher;
+                    document.getElementById('modal-tanggal-laporan').textContent = report.reportDate;
+                    document.getElementById('modal-permasalahan').textContent = report.problem;
+                    document.getElementById('modal-deskripsi-masalah').textContent = report.description;
+                    document.getElementById('modal-progress').value = report.progress;
+                    document.getElementById('modal-hasil-konseling').value = report.counselingResult;
+                    detailModal.classList.remove('hidden');
+                }
+            }
+        });
+        
+        document.getElementById('modal-close-btn').addEventListener('click', () => detailModal.classList.add('hidden'));
+
+        document.getElementById('modal-save-btn').addEventListener('click', async () => {
+            const reportId = document.getElementById('modal-report-id').value;
+            const reportRef = doc(db, "reports", reportId);
+            try {
+                await updateDoc(reportRef, {
+                    progress: document.getElementById('modal-progress').value,
+                    counselingResult: document.getElementById('modal-hasil-konseling').value
+                });
+                showToast('Perubahan berhasil disimpan!');
+                detailModal.classList.add('hidden');
+            } catch (error) {
+                console.error("Error updating report: ", error);
+                showToast('Gagal menyimpan perubahan.', 'error');
+            }
+        });
+
+        // --- MULTIPLE DELETE LOGIC ---
+        function showConfirmModal(message, onConfirm) {
+            confirmModalMessage.textContent = message;
+            onConfirmAction = onConfirm;
+            confirmModal.classList.remove('hidden');
+        }
+
+        function hideConfirmModal() {
+            confirmModal.classList.add('hidden');
+            onConfirmAction = null;
+        }
+
+        confirmModalCancel.addEventListener('click', hideConfirmModal);
+        
+        confirmModalOk.addEventListener('click', () => {
+            if (typeof onConfirmAction === 'function') {
+                onConfirmAction();
+            }
+            hideConfirmModal();
+        });
+
+        function updateDeleteButtonVisibility() {
+            if (selectedReports.size > 0) {
+                deleteSelectedBtn.classList.remove('hidden');
+            } else {
+                deleteSelectedBtn.classList.add('hidden');
+            }
+        }
+
+        selectAllCheckbox.addEventListener('change', (e) => {
+            const checkboxes = reportTableBody.querySelectorAll('.report-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = e.target.checked;
+                if (e.target.checked) {
+                    selectedReports.add(checkbox.dataset.id);
+                } else {
+                    selectedReports.delete(checkbox.dataset.id);
+                }
+            });
+            updateDeleteButtonVisibility();
+        });
+
+        reportTableBody.addEventListener('change', (e) => {
+            if (e.target.classList.contains('report-checkbox')) {
+                const reportId = e.target.dataset.id;
+                if (e.target.checked) {
+                    selectedReports.add(reportId);
+                } else {
+                    selectedReports.delete(reportId);
+                }
+                updateDeleteButtonVisibility();
+                
+                const allCheckboxes = reportTableBody.querySelectorAll('.report-checkbox');
+                const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+                selectAllCheckbox.checked = allChecked;
+            }
+        });
+
+        deleteSelectedBtn.addEventListener('click', () => {
+            if (selectedReports.size === 0) {
+                showToast('Tidak ada laporan yang dipilih.', 'info');
+                return;
+            }
+            
+            const message = `Apakah Anda yakin ingin menghapus ${selectedReports.size} laporan terpilih? Tindakan ini tidak bisa dibatalkan.`;
+            showConfirmModal(message, async () => {
+                loadingOverlay.classList.remove('hidden');
+                const deletePromises = [];
+                selectedReports.forEach(reportId => {
+                    deletePromises.push(deleteDoc(doc(db, "reports", reportId)));
+                });
+
+                try {
+                    await Promise.all(deletePromises);
+                    showToast(`${selectedReports.size} laporan berhasil dihapus.`);
+                    selectedReports.clear();
+                    selectAllCheckbox.checked = false;
+                    updateDeleteButtonVisibility();
+                } catch (error) {
+                    console.error("Error deleting reports: ", error);
+                    showToast('Gagal menghapus laporan.', 'error');
+                } finally {
+                    loadingOverlay.classList.add('hidden');
+                }
+            });
+        });
+        
+        // --- FILTERING AND EXCEL EXPORT ---
+        const filterLembaga = document.getElementById('filter-lembaga');
+        const filterKelas = document.getElementById('filter-kelas');
+
+        function filterAndRenderReports() {
+            const lembaga = filterLembaga.value;
+            const kelas = filterKelas.value;
+            
+            let filtered = allReports;
+
+            if (lembaga) {
+                filtered = filtered.filter(report => report.lembaga === lembaga);
+            }
+            if (kelas) {
+                filtered = filtered.filter(report => report.className === kelas);
+            }
+            renderReportsTable(filtered);
+        }
+
+        filterLembaga.addEventListener('change', () => {
+            renderClassOptions(filterLembaga.value);
+            filterAndRenderReports();
+        });
+        filterKelas.addEventListener('change', filterAndRenderReports);
+        
+        document.getElementById('download-excel-btn').addEventListener('click', async () => {
+            const lembaga = filterLembaga.value;
+            const kelas = filterKelas.value;
+            let filtered = allReports;
+            if (lembaga) filtered = filtered.filter(report => report.lembaga === lembaga);
+            if (kelas) filtered = filtered.filter(report => report.className === kelas);
+
+            const month = new Date().toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+            const filename = `Laporan_BK_${lembaga || 'Semua'}_${kelas || 'Semua'}_${month}.xlsx`;
+            const dataToExport = filtered.map(r => ({
+                'Lembaga': r.lembaga, 'Nama Siswa': r.studentName, 'Kelas': r.className, 'Guru Pelapor': r.reportingTeacher, 'Tanggal Laporan': r.reportDate, 'Kategori Masalah': r.problem, 'Deskripsi Masalah': r.description, 'Progress': r.progress, 'Hasil Konseling & Rekomendasi': r.counselingResult
+            }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan Siswa");
+            const cols = Object.keys(dataToExport[0] || {});
+            ws['!cols'] = cols.map(key => ({ wch: Math.max(key.length, ...dataToExport.map(row => (row[key] || '').toString().length)) + 2 }));
+            XLSX.writeFile(wb, filename);
+            showToast('Laporan Excel sedang diunduh!');
+        });
+
+        // --- UTILITY FUNCTIONS ---
+        const showToast = (message, type = 'success') => {
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'bg-yellow-500');
+            if (type === 'success') toast.classList.add('bg-green-500');
+            else if (type === 'error') toast.classList.add('bg-red-500');
+            else toast.classList.add('bg-yellow-500');
+            
+            toast.classList.remove('hidden');
+            setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+        };
+        
+        document.getElementById('tanggal-pelaporan').valueAsDate = new Date();
+    </script>
+
+</body>
+</html>
