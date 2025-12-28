@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Bimbingan Konseling - SMAS Al-Multazam</title>
+    <title>Sistem Informasi Bimbingan Konseling - Al-Multazam</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -100,7 +100,7 @@
         <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-105 duration-300">
             <div class="text-center mb-8">
                 <img id="login-logo" src="https://placehold.co/100x100/6FB1FC/FFFFFF?text=LOGO" alt="Logo Sekolah" class="w-24 h-24 mx-auto mb-4 rounded-full object-cover">
-                <h1 id="login-school-name" class="text-2xl font-bold text-gray-800">SMAS Al-Multazam</h1>
+                <h1 id="login-school-name" class="text-2xl font-bold text-gray-800">Nama Sekolah</h1>
                 <p class="text-gray-500">Sistem Informasi Bimbingan Konseling</p>
             </div>
             <form id="login-form">
@@ -128,10 +128,11 @@
             <!-- Sidebar -->
             <aside class="w-64 bg-white shadow-md flex-shrink-0 flex flex-col">
                 <div>
-                    <div class="p-4 text-center border-b">
-                         <img id="sidebar-logo" src="https://placehold.co/80x80/6FB1FC/FFFFFF?text=LOGO" alt="Logo Sekolah" class="w-20 h-20 mx-auto mb-2 rounded-full object-cover">
-                        <h2 id="sidebar-school-name" class="text-lg font-semibold text-gray-800">SMAS Al-Multazam</h2>
-                        <p id="user-role-display" class="text-xs text-gray-500 capitalize"></p>
+                    <div class="p-6 text-center border-b">
+                        <img id="sidebar-logo" src="https://placehold.co/100x100/6FB1FC/FFFFFF?text=LOGO" alt="Logo Sekolah" class="w-24 h-24 mx-auto mb-4 rounded-full object-cover">
+                        <h2 id="sidebar-school-name" class="text-xl font-bold text-gray-800">Nama Sekolah</h2>
+                        <p class="text-sm text-gray-500 mt-1">Sistem Informasi Bimbingan Konseling</p>
+                        <p id="user-role-display" class="mt-4 text-xs font-medium text-gray-500 uppercase tracking-wider capitalize"></p>
                     </div>
                     <nav id="main-nav" class="mt-4">
                         <a href="#" data-page="dashboard" data-roles="admin,guru_bk,guru_mapel" class="nav-link flex items-center px-6 py-3 text-gray-700 bg-gray-200">
@@ -153,6 +154,14 @@
                         <a href="#" data-page="kelola-kelas" data-roles="admin" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
                             <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                             Kelola Kelas
+                        </a>
+                        <a href="#" data-page="kelola-siswa" data-roles="admin" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2"></path></svg>
+                            Kelola Siswa
+                        </a>
+                        <a href="#" data-page="kelola-permasalahan" data-roles="admin,guru_bk" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+                           <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Kelola Permasalahan
                         </a>
                         <a href="#" data-page="biodata-sekolah" data-roles="admin" class="nav-link flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
                             <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
@@ -240,7 +249,7 @@
                                 </div>
                                 <div class="md:col-span-2">
                                     <label for="nama-siswa" class="block text-gray-700 font-medium mb-2">Nama Siswa</label>
-                                    <input type="text" id="nama-siswa" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                    <select id="nama-siswa" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required></select>
                                 </div>
                                 <div>
                                     <label for="guru-pelapor" class="block text-gray-700 font-medium mb-2">Nama Guru Pelapor</label>
@@ -253,13 +262,6 @@
                                 <div class="md:col-span-2">
                                     <label for="permasalahan" class="block text-gray-700 font-medium mb-2">Permasalahan Siswa</label>
                                     <select id="permasalahan" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                                        <option value="Akademik">Akademik</option>
-                                        <option value="Emosional">Emosional</option>
-                                        <option value="Sosial">Sosial</option>
-                                        <option value="Karir">Karir</option>
-                                        <option value="Keluarga">Keluarga</option>
-                                        <option value="Perilaku">Perilaku</option>
-                                        <option value="Kesehatan">Kesehatan</option>
                                     </select>
                                 </div>
                                 <div class="md:col-span-2">
@@ -364,6 +366,71 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="kelola-siswa-page" class="page-content hidden">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Kelola Siswa</h1>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Tambah Siswa Baru</h2>
+                            <form id="form-tambah-siswa">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="lembaga-siswa-baru" class="block text-gray-700 font-medium mb-2">Pilih Lembaga</label>
+                                        <select id="lembaga-siswa-baru" class="w-full border-gray-300 rounded-lg shadow-sm" required></select>
+                                    </div>
+                                    <div>
+                                        <label for="kelas-siswa-baru" class="block text-gray-700 font-medium mb-2">Pilih Kelas</label>
+                                        <select id="kelas-siswa-baru" class="w-full border-gray-300 rounded-lg shadow-sm" required></select>
+                                    </div>
+                                    <div>
+                                        <label for="nama-siswa-baru" class="block text-gray-700 font-medium mb-2">Nama Siswa</label>
+                                        <input type="text" id="nama-siswa-baru" placeholder="Contoh: Budi Sanjaya" class="w-full border-gray-300 rounded-lg shadow-sm" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Tambah Siswa</button>
+                            </form>
+                             <hr class="my-8">
+                            <h2 class="text-xl font-semibold mb-4">Impor Siswa dari Excel</h2>
+                            <div class="space-y-4">
+                                <p class="text-sm text-gray-600">
+                                    Pastikan file Excel Anda memiliki kolom: <strong>Nama Siswa</strong>, <strong>Lembaga</strong>, dan <strong>Kelas</strong>.
+                                </p>
+                                <div>
+                                    <button id="download-template-btn" class="w-full flex items-center justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                        Unduh Template
+                                    </button>
+                                </div>
+                                <div>
+                                    <label for="import-excel-input" class="block text-gray-700 font-medium mb-2">Pilih File Excel</label>
+                                    <input type="file" id="import-excel-input" accept=".xlsx, .xls" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Daftar Siswa</h2>
+                            <ul id="daftar-siswa-list" class="space-y-2 h-96 overflow-y-auto"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="kelola-permasalahan-page" class="page-content hidden">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Kelola Kategori Permasalahan</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Tambah Kategori Baru</h2>
+                            <form id="form-tambah-permasalahan">
+                                <label for="nama-permasalahan-baru" class="block text-gray-700 font-medium mb-2">Nama Kategori</label>
+                                <input type="text" id="nama-permasalahan-baru" placeholder="Contoh: Keuangan" class="w-full border-gray-300 rounded-lg shadow-sm" required>
+                                <button type="submit" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Tambah Kategori</button>
+                            </form>
+                        </div>
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h2 class="text-xl font-semibold mb-4">Daftar Kategori</h2>
+                            <ul id="daftar-permasalahan-list" class="space-y-2"></ul>
+                        </div>
+                    </div>
+                </div>
                 
                 <div id="biodata-sekolah-page" class="page-content hidden">
                     <h1 class="text-3xl font-bold text-gray-800 mb-6">Biodata Sekolah</h1>
@@ -448,8 +515,8 @@
                     <div class="flex space-x-4">
                         <div>
                             <a href="#" class="flex items-center py-5 px-2 text-gray-700">
-                                <img id="parent-logo" src="https://placehold.co/40x40/6FB1FC/FFFFFF?text=LOGO" alt="Logo" class="h-8 w-8 mr-2 rounded-full">
-                                <span id="parent-school-name" class="font-bold">SMAS Al-Multazam</span>
+                                <img id="parent-logo" src="https://i.ibb.co.com/PG59mBdt/Logo-SMA-Baru.png" alt="Logo" class="h-8 w-8 mr-2 rounded-full">
+                                <span id="parent-school-name" class="font-bold">SMAS, SMP dan MTs. Al-Multazam</span>
                             </a>
                         </div>
                     </div>
@@ -552,7 +619,8 @@
             updateDoc,
             onSnapshot,
             query,
-            where
+            where,
+            writeBatch
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Your Firebase project configuration
@@ -577,6 +645,8 @@
         let allReports = [];
         let allLembaga = [];
         let allClasses = [];
+        let allStudents = [];
+        let allProblems = [];
 
         // --- DOM ELEMENTS ---
         const loadingOverlay = document.getElementById('loading-overlay');
@@ -601,54 +671,12 @@
         
         let permasalahanChart;
         let onConfirmAction = null;
-
-        // --- THEME FUNCTIONS ---
-        const applyTheme = (themeClass) => {
-            if (!themeClass) themeClass = 'theme-blue';
-            document.body.className = '';
-            document.body.classList.add(themeClass);
-        };
-
-        const renderThemeOptions = (currentTheme) => {
-            const themes = [
-                { id: 'theme-blue', name: 'Biru', color: 'bg-blue-500' },
-                { id: 'theme-green', name: 'Hijau', color: 'bg-green-500' },
-                { id: 'theme-purple', name: 'Ungu', color: 'bg-purple-500' },
-                { id: 'theme-dark', name: 'Gelap', color: 'bg-gray-800' }
-            ];
-            const container = document.getElementById('theme-options-container');
-            container.innerHTML = '';
-            themes.forEach(theme => {
-                const isChecked = theme.id === currentTheme;
-                container.innerHTML += `
-                    <div class="flex items-center">
-                        <input id="theme-${theme.id}" name="theme-choice" type="radio" value="${theme.id}" ${isChecked ? 'checked' : ''} class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
-                        <label for="theme-${theme.id}" class="ml-3 block text-sm font-medium text-gray-700">
-                           <span class="flex items-center">
-                                <span class="w-4 h-4 rounded-full ${theme.color} mr-2"></span>
-                                ${theme.name}
-                           </span>
-                        </label>
-                    </div>
-                `;
-            });
-        };
         
         // --- REALTIME LISTENERS ---
         function setupRealtimeListeners() {
             // Detach any existing listeners
             unsubscribeListeners.forEach(unsubscribe => unsubscribe());
             unsubscribeListeners = [];
-
-            // Listener for School Profile
-            const unsubProfile = onSnapshot(doc(db, "schoolProfile", "main"), (doc) => {
-                const profile = doc.data();
-                if (profile) {
-                    applyTheme(profile.theme);
-                    renderSchoolProfile(profile);
-                }
-            });
-            unsubscribeListeners.push(unsubProfile);
 
             // Listener for Lembaga
             const unsubLembaga = onSnapshot(collection(db, "lembaga"), (snapshot) => {
@@ -665,6 +693,22 @@
                 renderClassOptions(); // Render all initially
             });
             unsubscribeListeners.push(unsubClasses);
+
+            // Listener for Students
+            const unsubStudents = onSnapshot(collection(db, "students"), (snapshot) => {
+                allStudents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderStudentList(allStudents);
+                renderStudentOptions();
+            });
+            unsubscribeListeners.push(unsubStudents);
+
+            // Listener for Problem Categories
+            const unsubProblems = onSnapshot(collection(db, "problemCategories"), (snapshot) => {
+                allProblems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderProblemList(allProblems);
+                renderProblemOptions(allProblems);
+            });
+            unsubscribeListeners.push(unsubProblems);
 
             // Listener for Reports
             const unsubReports = onSnapshot(collection(db, "reports"), (snapshot) => {
@@ -702,11 +746,16 @@
                     case 'Selesai': progressBadge = 'bg-green-100 text-green-800'; break;
                     default: progressBadge = 'bg-gray-100 text-gray-800';
                 }
+                
+                const descriptionHtml = (currentUserProfile.role === 'guru_bk' || currentUserProfile.role === 'admin')
+                    ? `<p class="text-sm text-gray-600 mt-1">${report.description}</p>`
+                    : '';
+
                 const reportElement = `
                     <div class="bg-white p-4 rounded-lg shadow-md flex items-start justify-between gap-4">
                         <div>
                             <p class="font-semibold text-gray-800">${report.studentName} <span class="text-sm font-normal text-gray-500">- ${report.className}</span></p>
-                            <p class="text-sm text-gray-600 mt-1">${report.description}</p>
+                            ${descriptionHtml}
                         </div>
                         <span class="ml-4 flex-shrink-0 px-2 py-1 text-xs font-medium rounded-full ${progressBadge}">${report.progress}</span>
                     </div>
@@ -721,8 +770,10 @@
             document.getElementById('laporan-baru-count').textContent = reports.filter(r => r.progress === 'Baru').length;
             document.getElementById('laporan-selesai').textContent = reports.filter(r => r.progress === 'Selesai').length;
             document.getElementById('total-kelas').textContent = classesCount;
-            const problemCategories = ['Akademik', 'Emosional', 'Sosial', 'Karir', 'Keluarga', 'Perilaku', 'Kesehatan'];
+            
+            const problemCategories = allProblems.map(p => p.name);
             const problemCounts = problemCategories.map(cat => reports.filter(r => r.problem === cat).length);
+            
             const ctx = document.getElementById('permasalahanChart').getContext('2d');
             if (permasalahanChart) {
                 permasalahanChart.destroy();
@@ -825,11 +876,11 @@
         };
 
         const renderLembagaOptions = (lembaga = []) => {
-            const selects = [document.getElementById('lembaga-kelas-baru'), document.getElementById('lembaga-laporan'), document.getElementById('filter-lembaga')];
+            const selects = [document.getElementById('lembaga-kelas-baru'), document.getElementById('lembaga-laporan'), document.getElementById('filter-lembaga'), document.getElementById('lembaga-siswa-baru')];
             selects.forEach(select => {
                 if (select) {
                     const selectedValue = select.value;
-                    select.innerHTML = '<option value="">Semua Lembaga</option>';
+                    select.innerHTML = '<option value="">Pilih Lembaga</option>';
                     lembaga.sort((a, b) => a.name.localeCompare(b.name)).forEach(l => {
                         select.innerHTML += `<option value="${l.name}">${l.name}</option>`;
                     });
@@ -839,19 +890,88 @@
         };
 
         const renderClassOptions = (lembagaName = null) => {
-            const selects = [document.getElementById('kelas-siswa'), document.getElementById('filter-kelas')];
+            const selects = [document.getElementById('kelas-siswa'), document.getElementById('filter-kelas'), document.getElementById('kelas-siswa-baru')];
             const classesToRender = lembagaName ? allClasses.filter(c => c.lembaga === lembagaName) : allClasses;
             
             selects.forEach(select => {
                 if (select) {
                     const selectedValue = select.value;
-                    select.innerHTML = '<option value="">Semua Kelas</option>';
+                    select.innerHTML = '<option value="">Pilih Kelas</option>';
                     classesToRender.sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
                         select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
                     });
                     select.value = selectedValue;
                 }
             });
+        };
+
+        const renderStudentOptions = (className = null) => {
+            const select = document.getElementById('nama-siswa');
+            const studentsToRender = className ? allStudents.filter(s => s.className === className) : allStudents;
+            
+            if (select) {
+                const selectedValue = select.value;
+                select.innerHTML = '<option value="">Pilih Siswa</option>';
+                studentsToRender.sort((a, b) => a.name.localeCompare(b.name)).forEach(s => {
+                    select.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+                });
+                select.value = selectedValue;
+            }
+        };
+
+        const renderStudentList = (students = []) => {
+            const list = document.getElementById('daftar-siswa-list');
+            list.innerHTML = '';
+            if (students.length === 0) {
+                list.innerHTML = `<li class="text-gray-500">Belum ada siswa ditambahkan.</li>`;
+                return;
+            }
+            students.sort((a, b) => a.name.localeCompare(b.name)).forEach(s => {
+                const item = `
+                    <li class="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                        <div>
+                            <span class="font-medium">${s.name}</span>
+                            <span class="text-sm text-gray-500 ml-2">(${s.className})</span>
+                        </div>
+                        <button data-id="${s.id}" class="delete-student-btn text-red-500 hover:text-red-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </li>
+                `;
+                list.innerHTML += item;
+            });
+        };
+
+        const renderProblemList = (problems = []) => {
+            const list = document.getElementById('daftar-permasalahan-list');
+            list.innerHTML = '';
+            if (problems.length === 0) {
+                list.innerHTML = `<li class="text-gray-500">Belum ada kategori ditambahkan.</li>`;
+                return;
+            }
+            problems.sort((a, b) => a.name.localeCompare(b.name)).forEach(p => {
+                const item = `
+                    <li class="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                        <span>${p.name}</span>
+                        <button data-id="${p.id}" class="delete-problem-btn text-red-500 hover:text-red-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </li>
+                `;
+                list.innerHTML += item;
+            });
+        };
+
+        const renderProblemOptions = (problems = []) => {
+            const select = document.getElementById('permasalahan');
+            if (select) {
+                const selectedValue = select.value;
+                select.innerHTML = '<option value="">Pilih Permasalahan</option>';
+                problems.sort((a, b) => a.name.localeCompare(b.name)).forEach(p => {
+                    select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+                });
+                select.value = selectedValue;
+            }
         };
 
         const renderSchoolProfile = (profile) => {
@@ -933,6 +1053,17 @@
             mainApp.style.display = 'none';
             parentApp.style.display = 'none';
             
+            // Always try to load school profile for login page
+            const profileDoc = await getDoc(doc(db, "schoolProfile", "main"));
+            if (profileDoc.exists()) {
+                const profile = profileDoc.data();
+                document.querySelectorAll('#login-school-name, #sidebar-school-name, #parent-school-name').forEach(el => el.textContent = profile.name);
+                document.querySelectorAll('#login-logo, #sidebar-logo, #parent-logo').forEach(el => {
+                    el.src = profile.logoUrl || 'https://placehold.co/100x100/cccccc/ffffff?text=LOGO';
+                    el.onerror = () => { el.src = 'https://placehold.co/100x100/cccccc/ffffff?text=Error'; };
+                });
+            }
+
             if (user) {
                 // User is signed in.
                 const userDocRef = doc(db, "users", user.uid);
@@ -1073,7 +1204,7 @@
             const deleteBtn = e.target.closest('.delete-class-btn');
             if (deleteBtn) {
                 const classId = deleteBtn.dataset.id;
-                const className = deleteBtn.parentElement.querySelector('span').textContent;
+                const className = deleteBtn.parentElement.querySelector('div span').textContent;
                 showConfirmModal(`Apakah Anda yakin ingin menghapus kelas "${className}"?`, async () => {
                      try {
                         await deleteDoc(doc(db, "classes", classId));
@@ -1081,6 +1212,74 @@
                     } catch (error) {
                         console.error("Error deleting class: ", error);
                         showToast('Gagal menghapus kelas.', 'error');
+                    }
+                });
+            }
+        });
+
+        document.getElementById('form-tambah-siswa').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newStudentName = document.getElementById('nama-siswa-baru').value.trim();
+            const lembaga = document.getElementById('lembaga-siswa-baru').value;
+            const className = document.getElementById('kelas-siswa-baru').value;
+            if (newStudentName && lembaga && className) {
+                try {
+                    await addDoc(collection(db, "students"), { name: newStudentName, lembaga: lembaga, className: className });
+                    showToast('Siswa berhasil ditambahkan!');
+                    e.target.reset();
+                } catch (error) {
+                    console.error("Error adding student: ", error);
+                    showToast('Gagal menambahkan siswa.', 'error');
+                }
+            } else {
+                showToast('Lembaga, Kelas, dan Nama Siswa harus diisi.', 'error');
+            }
+        });
+
+        document.getElementById('daftar-siswa-list').addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.delete-student-btn');
+            if (deleteBtn) {
+                const studentId = deleteBtn.dataset.id;
+                const studentName = deleteBtn.parentElement.querySelector('div span').textContent;
+                showConfirmModal(`Apakah Anda yakin ingin menghapus siswa "${studentName}"?`, async () => {
+                     try {
+                        await deleteDoc(doc(db, "students", studentId));
+                        showToast('Siswa berhasil dihapus!');
+                    } catch (error) {
+                        console.error("Error deleting student: ", error);
+                        showToast('Gagal menghapus siswa.', 'error');
+                    }
+                });
+            }
+        });
+
+        document.getElementById('form-tambah-permasalahan').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newProblemName = document.getElementById('nama-permasalahan-baru').value.trim();
+            if (newProblemName) {
+                try {
+                    await addDoc(collection(db, "problemCategories"), { name: newProblemName });
+                    showToast('Kategori permasalahan berhasil ditambahkan!');
+                    e.target.reset();
+                } catch (error) {
+                    console.error("Error adding problem category: ", error);
+                    showToast('Gagal menambahkan kategori.', 'error');
+                }
+            }
+        });
+
+        document.getElementById('daftar-permasalahan-list').addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.delete-problem-btn');
+            if (deleteBtn) {
+                const problemId = deleteBtn.dataset.id;
+                const problemName = deleteBtn.parentElement.querySelector('span').textContent;
+                showConfirmModal(`Apakah Anda yakin ingin menghapus kategori "${problemName}"?`, async () => {
+                     try {
+                        await deleteDoc(doc(db, "problemCategories", problemId));
+                        showToast('Kategori berhasil dihapus!');
+                    } catch (error) {
+                        console.error("Error deleting problem category: ", error);
+                        showToast('Gagal menghapus kategori.', 'error');
                     }
                 });
             }
@@ -1144,7 +1343,6 @@
                                 <p class="font-semibold text-gray-700">${r.problem}</p>
                                 <p class="text-sm text-gray-500">${r.reportDate}</p>
                             </div>
-                            <p class="mt-1 text-sm text-gray-600">${r.description}</p>
                             ${r.progress === 'Selesai' && r.counselingResult ? `<div class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600"><p class="text-sm text-gray-500"><strong>Hasil Konseling:</strong> ${r.counselingResult}</p></div>` : ''}
                         </li>
                     `;
@@ -1335,6 +1533,69 @@
             showToast('Laporan Excel sedang diunduh!');
         });
 
+        // --- EXCEL IMPORT ---
+        document.getElementById('download-template-btn').addEventListener('click', () => {
+            const templateData = [
+                { "Nama Siswa": "Contoh Nama", "Lembaga": "SMA", "Kelas": "XII IPA 1" }
+            ];
+            const ws = XLSX.utils.json_to_sheet(templateData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template Siswa");
+            ws['!cols'] = [ {wch: 20}, {wch: 15}, {wch: 15} ];
+            XLSX.writeFile(wb, "template_import_siswa.xlsx");
+        });
+
+        document.getElementById('import-excel-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet);
+
+                    if (json.length === 0) {
+                        showToast("File Excel kosong.", "error");
+                        return;
+                    }
+
+                    loadingOverlay.classList.remove('hidden');
+                    const batch = writeBatch(db);
+                    let importedCount = 0;
+
+                    json.forEach(row => {
+                        const studentName = row['Nama Siswa'];
+                        const lembaga = row['Lembaga'];
+                        const className = row['Kelas'];
+
+                        if (studentName && lembaga && className) {
+                            const newStudentRef = doc(collection(db, "students"));
+                            batch.set(newStudentRef, {
+                                name: studentName.toString().trim(),
+                                lembaga: lembaga.toString().trim(),
+                                className: className.toString().trim()
+                            });
+                            importedCount++;
+                        }
+                    });
+
+                    await batch.commit();
+                    showToast(`${importedCount} siswa berhasil diimpor!`);
+                } catch (error) {
+                    console.error("Error importing students:", error);
+                    showToast("Gagal mengimpor file. Pastikan format sudah benar.", "error");
+                } finally {
+                    loadingOverlay.classList.add('hidden');
+                    e.target.value = ''; // Reset file input
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
         // --- UTILITY FUNCTIONS ---
         const showToast = (message, type = 'success') => {
             toastMessage.textContent = message;
@@ -1348,6 +1609,20 @@
         };
         
         document.getElementById('tanggal-pelaporan').valueAsDate = new Date();
+
+        // --- DYNAMIC DROPDOWN LISTENERS ---
+        document.getElementById('lembaga-siswa-baru').addEventListener('change', (e) => {
+            renderClassOptions(e.target.value);
+        });
+
+        document.getElementById('lembaga-laporan').addEventListener('change', (e) => {
+            renderClassOptions(e.target.value);
+            renderStudentOptions(); // Clear students when institution changes
+        });
+
+        document.getElementById('kelas-siswa').addEventListener('change', (e) => {
+            renderStudentOptions(e.target.value);
+        });
     </script>
 
 </body>
